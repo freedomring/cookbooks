@@ -1,0 +1,15 @@
+[ req ]
+default_bits = 1024
+default_keyfile = <%= @key_path %>
+distinguished_name = req_distinguished_name
+prompt = no
+output_password = <%= @password %>
+
+[ req_distinguished_name ]
+C = US
+ST = CA
+L = SFO
+O = SendMe, Inc.
+OU = SendMe DevOps
+CN = <%= @site_name %>
+emailAddress = <%= @site_email %>

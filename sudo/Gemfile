@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'chef'
 gem 'rake'
@@ -8,5 +8,5 @@ group :test do
   gem 'fauxhai'
   gem 'foodcritic'
   gem 'fuubar'
-  gem 'test-kitchen', '< 1.0'
+  gem 'test-kitchen', '> 1.0.0.alpha.5'
 end

@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
-gem 'test-kitchen', '< 1.0'
+gem 'test-kitchen', '> 1.0.0.alpha.5'
 gem 'chefspec', git: 'git://github.com/acrmp/chefspec.git'

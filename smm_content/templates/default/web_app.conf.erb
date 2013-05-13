@@ -1,0 +1,68 @@
+<%
+	fullAppPath = @application_path
+
+	if (! fullAppPath.match(/^\//))
+		fullAppPath = "/#{fullAppPath}"
+	end
+
+	if (! fullAppPath.match(/.*\/$/))
+		fullAppPath = "#{fullAppPath}/"
+	end
+
+   lameAppPath = fullAppPath.chomp("/")
+
+   rewritePath = fullAppPath[0..-1]
+%>
+<VirtualHost <%= @listener =%>:<%= @port %>>
+	ServerName <%= @server_name %>
+	ServerAlias <% @server_aliases.each do |a| %><%= "#{a}" %> <% end %>
+
+	DocumentRoot <%= @docroot %>
+
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+
+	<Directory <%= @docroot %>>
+		Options FollowSymLinks
+		AllowOverride None
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	<Location /server-status>
+		SetHandler server-status
+
+		Order Deny,Allow
+		Deny from all
+		Allow from 10.0.0.0/8
+	</Location>
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	ErrorLog <%= node['apache']['log_dir'] %>/<%= @application_name %>-error.log
+	CustomLog <%= node['apache']['log_dir'] %>/<%= @application_name %>-access.log combined
+
+	<% if (!@cert_path.nil? and ! @key_path.nil? and @port.eql?("443")) %>
+		SSLEngine on
+
+		SSLCertificateFile    <%= @cert_path %>
+		SSLCertificateKeyFile <%= @key_path %>
+
+		<FilesMatch "\.(cgi|shtml|phtml|php)$">
+		SSLOptions +StdEnvVars
+		</FilesMatch>
+
+		<Directory /usr/lib/cgi-bin>
+		SSLOptions +StdEnvVars
+		</Directory>
+
+		BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
+
+		BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+	<% end %>
+
+</VirtualHost>
